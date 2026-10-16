@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>האפליקציות שלי</title>
+  <style>
+    :root{
+      --bg:#f4f6f8;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --soft:#f9fafb;
+      --accent:#7a2336;
+      --accent-soft:#f6ecef;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:Arial,"Noto Sans Hebrew",sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    .wrap{
+      width:min(900px,calc(100% - 28px));
+      margin:auto;
+      padding:34px 0 60px;
+    }
+
+    .top{
+      margin-bottom:24px;
+    }
+
+    h1{
+      margin:0 0 8px;
+      font-size:clamp(30px,5vw,44px);
+      text-align:center;
+    }
+
+    .subtitle{
+      text-align:center;
+      color:var(--muted);
+      margin:0 0 24px;
+      font-size:16px;
+    }
+
+    .search-wrap{
+      position:sticky;
+      top:12px;
+      z-index:20;
+      background:rgba(244,246,248,.92);
+      backdrop-filter:blur(8px);
+      padding:4px 0 10px;
+    }
+
+    .search{
+      width:100%;
+      height:54px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:white;
+      padding:0 18px;
+      font-size:18px;
+      outline:none;
+      direction:rtl;
+      box-shadow:0 4px 18px rgba(0,0,0,.04);
+    }
+
+    .search:focus{
+      border-color:#b8a3aa;
+      box-shadow:0 0 0 3px rgba(122,35,54,.08);
+    }
+
+    .tree{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    details{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:14px;
+      overflow:hidden;
+    }
+
+    details details{
+      margin:10px 14px 14px;
+      background:var(--soft);
+      border-radius:11px;
+    }
+
+    summary{
+      list-style:none;
+      cursor:pointer;
+      user-select:none;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:17px 18px;
+      font-weight:700;
+      font-size:19px;
+    }
+
+    summary::-webkit-details-marker{display:none}
+
+    summary:hover{background:#fbfbfc}
+
+    .folder-icon{
+      width:28px;
+      height:28px;
+      display:grid;
+      place-items:center;
+      border-radius:8px;
+      background:var(--accent-soft);
+      color:var(--accent);
+      flex:0 0 auto;
+    }
+
+    .folder-icon::before{content:"▸";font-size:16px;transition:.18s ease}
+    details[open] > summary .folder-icon::before{transform:rotate(90deg)}
+
+    .count{
+      margin-inline-start:auto;
+      color:var(--muted);
+      font-size:13px;
+      font-weight:400;
+      background:#f3f4f6;
+      border-radius:999px;
+      padding:4px 8px;
+    }
+
+    .content{
+      border-top:1px solid var(--line);
+      padding:10px;
+    }
+
+    .link-list{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .app-link{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-height:52px;
+      padding:11px 13px;
+      border-radius:10px;
+      color:var(--text);
+      text-decoration:none;
+      background:white;
+      border:1px solid transparent;
+      transition:.15s ease;
+    }
+
+    .app-link:hover{
+      border-color:#d9dce1;
+      transform:translateX(-2px);
+      box-shadow:0 4px 12px rgba(0,0,0,.05);
+    }
+
+    .link-icon{
+      width:30px;
+      height:30px;
+      display:grid;
+      place-items:center;
+      border-radius:8px;
+      background:#eef1f4;
+      color:#4b5563;
+      flex:0 0 auto;
+      font-size:16px;
+    }
+
+    .app-title{
+      font-size:16px;
+      font-weight:700;
+      line-height:1.35;
+    }
+
+    .app-host{
+      color:var(--muted);
+      font-size:12px;
+      margin-top:2px;
+      direction:ltr;
+      text-align:right;
+    }
+
+    .empty{
+      display:none;
+      text-align:center;
+      padding:36px 16px;
+      color:var(--muted);
+      background:white;
+      border:1px solid var(--line);
+      border-radius:14px;
+    }
+
+    .hidden{display:none!important}
+
+    @media (max-width:600px){
+      .wrap{width:min(100% - 20px,900px);padding-top:22px}
+      summary{font-size:17px;padding:15px}
+      details details{margin:8px 10px 10px}
+      .app-title{font-size:15px}
+      .subtitle{font-size:14px}
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="top">
+      <h1>האפליקציות שלי</h1>
+      <p class="subtitle">פותחים קטגוריה, בוחרים נושא ונכנסים ישר לאפליקציה</p>
+
+      <div class="search-wrap">
+        <input id="search" class="search" type="search" placeholder="חיפוש אפליקציה או נושא..." autocomplete="off" />
+      </div>
+    </div>
+
+    <div id="tree" class="tree"></div>
+    <div id="empty" class="empty">לא נמצאו תוצאות לחיפוש הזה.</div>
+  </main>
+
+  <script>
+    /*
+      ================================================================
+      זה החלק היחיד שבו צריך לגעת כשמוסיפים אפליקציות
+      ================================================================
+
+      קישור בתוך קטגוריה קיימת:
+      { title: "שם האפליקציה", url: "https://example.com" },
+
+      תיקייה בתוך קטגוריה:
+      {
+        title: "שם התיקייה",
+        links: [
+          { title: "שם האפליקציה", url: "https://example.com" },
+        ]
+      }
+
+      אפשר גם להוסיף עוד folders אם בעתיד תרצה עוד רמה בהיררכיה.
+    */
+
+    const groups = [
+      {
+        title: "משחקים",
+        links: [
+          { title: "מאחורי הווילון", url: "https://eyez-math.github.io/game1/" },
+        ]
+      },
+      {
+        title: "כיתה ט׳",
+        links: [
+          { title: "מתמטיקה ט׳ - גוש ב׳", url: "https://eyez-math.github.io/math-links-9/" },
+          { title: "לוח מורה — ציוני יישומונים", url: "https://eyez-math.github.io/teacher-dashboard/" },
+          { title: "מבוא לפונקציה", url: "https://eyez-math.github.io/function-intro/" },
+        ]
+      },
+      {
+        title: "3 יחידות",
+        folders: [
+          {
+            title: "גרפים",
+            links: [
+              { title: "גרפים - שאלות בגרות", url: "https://eyez-math.github.io/interactive-graphs/" },
+            ]
+          },
+          {
+            title: "הסתברות",
+            links: [
+              { title: "הסתברות כיתה י׳ - 3 יחידות", url: "https://eyez-math.github.io/probability-grade10/" },
+            ]
+          },
+          {
+            title: "קוביות",
+            links: [
+              { title: "מבנה מקוביות — 3 יחידות", url: "https://eyez-math.github.io/cube-structures/" },
+              { title: "מבנים מקוביות — חוברת אינטראקטיבית", url: "https://eyez-math.github.io/cube-structures-exc/" },
+            ]
+          },
+          {
+            title: "התפלגות נורמלית",
+            links: [
+              { title: "התפלגות נורמלית", url: "https://eyez-math.github.io/Normal-distribution/" },
+            ]
+          }
+        ]
+      },
+      {
+        title: "4 יחידות",
+        links: [
+          { title: "נגזרת מהבסיס — מבינים שיפוע וגוזרים בלי להקליד", url: "https://eyez-math.github.io/derivative-visual/" },
+        ]
+      },
+      {
+        title: "5 יחידות",
+        links: [
+          { title: "פונקציה, נגזרת ונגזרת שנייה", url: "https://eyez-math.github.io/function-and-its-derivative/" },
+          { title: "הפונקציה הצוברת", url: "https://eyez-math.github.io/Accumulator-function/" },
+        ]
+      }
+    ];
+
+    // מכאן ומטה לא צריך לגעת
+    const tree = document.getElementById("tree");
+    const search = document.getElementById("search");
+    const empty = document.getElementById("empty");
+
+    function hostName(url){
+      try{
+        return new URL(url).hostname.replace(/^www\./, "");
+      }catch{
+        return "";
+      }
+    }
+
+    function countLinks(node){
+      let count = node.links?.length || 0;
+      (node.folders || []).forEach(folder => count += countLinks(folder));
+      return count;
+    }
+
+    function linkHtml(link){
+      return `
+        <a class="app-link searchable-link" href="${link.url}" target="_blank" rel="noopener noreferrer"
+           data-search="${(link.title + ' ' + link.url).toLowerCase()}">
+          <span class="link-icon">↗</span>
+          <span>
+            <div class="app-title">${link.title}</div>
+            <div class="app-host">${hostName(link.url)}</div>
+          </span>
+        </a>
+      `;
+    }
+
+    function folderHtml(folder, level = 0){
+      const links = (folder.links || []).map(linkHtml).join("");
+      const folders = (folder.folders || []).map(child => folderHtml(child, level + 1)).join("");
+      const count = countLinks(folder);
+
+      return `
+        <details class="folder searchable-folder" data-title="${folder.title.toLowerCase()}" data-level="${level}">
+          <summary>
+            <span class="folder-icon"></span>
+            <span>${folder.title}</span>
+            <span class="count">${count}</span>
+          </summary>
+          <div class="content">
+            ${links ? `<div class="link-list">${links}</div>` : ""}
+            ${folders}
+          </div>
+        </details>
+      `;
+    }
+
+    tree.innerHTML = groups.map(group => folderHtml(group, 0)).join("");
+
+    function normalize(text){
+      return text.trim().toLowerCase();
+    }
+
+    function filterFolder(folder, term){
+      const titleMatch = (folder.dataset.title || "").includes(term);
+      const directLinks = [...folder.querySelectorAll(":scope > .content > .link-list > .searchable-link")];
+      const childFolders = [...folder.querySelectorAll(":scope > .content > .searchable-folder")];
+
+      let directMatchCount = 0;
+      directLinks.forEach(link => {
+        const match = !term || link.dataset.search.includes(term) || titleMatch;
+        link.classList.toggle("hidden", !match);
+        if(match) directMatchCount++;
+      });
+
+      let childMatchCount = 0;
+      childFolders.forEach(child => {
+        const childHasMatch = filterFolder(child, term || (titleMatch ? "" : term));
+        if(childHasMatch) childMatchCount++;
+      });
+
+      const hasMatch = titleMatch || directMatchCount > 0 || childMatchCount > 0;
+      folder.classList.toggle("hidden", !hasMatch);
+
+      if(term){
+        folder.open = hasMatch;
+      }else{
+        folder.open = false;
+      }
+
+      return hasMatch;
+    }
+
+    search.addEventListener("input", () => {
+      const term = normalize(search.value);
+      const roots = [...tree.children];
+      let visible = 0;
+
+      roots.forEach(folder => {
+        if(filterFolder(folder, term)) visible++;
+      });
+
+      empty.style.display = visible ? "none" : "block";
+    });
+  </script>
+</body>
+</html>
