@@ -216,10 +216,10 @@
   <main class="wrap">
     <div class="top">
       <h1>האפליקציות שלי</h1>
-      <p class="subtitle">פותחים קטגוריה, בוחרים נושא ונכנסים ישר לאפליקציה</p>
+      <p class="subtitle">פותחים קטגוריה, בוחרים נושא ונכנסים לאפליקציה או לחוברת</p>
 
       <div class="search-wrap">
-        <input id="search" class="search" type="search" placeholder="חיפוש אפליקציה או נושא..." autocomplete="off" />
+        <input id="search" class="search" type="search" placeholder="חיפוש אפליקציה, חוברת או נושא..." autocomplete="off" />
       </div>
     </div>
 
@@ -250,9 +250,18 @@
     const groups = [
       {
         title: "חוברות עבודה",
-        links: [
-          { title: "תיקיית חוברות העבודה ב-Google Drive", url: "https://drive.google.com/drive/folders/1prc72-4d-KFEhb9n6WYdaImZOrujVnzg?usp=sharing" },
-          // להוספת חוברת ישירה: { title: "שם החוברת", url: "קישור לחוברת" },
+        folders: [
+          {
+            title: "3 יחידות מתמטיקה",
+            links: [
+              { title: "גאומטריה אנליטית", url: "workbooks/analytic-geometry.pdf" },
+              { title: "תכנון לינארי", url: "workbooks/linear-programming.pdf" },
+              { title: "התפלגות נורמלית", url: "workbooks/normal-distribution.pdf" },
+              { title: "מודל ריבועי", url: "workbooks/quadratic-model.pdf" },
+              { title: "מבנה קוביות", url: "workbooks/cube-structures.pdf" },
+              { title: "גופים במרחב", url: "workbooks/solid-geometry.pdf" },
+            ]
+          }
         ]
       },
       {
